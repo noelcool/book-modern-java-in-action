@@ -88,3 +88,68 @@ List<String> threeHighCaloricDishNames = menu.stream() // 스트림
    3. 작업을 투명하게 병렬로 처리하거나 최적화된 다양한 순서로 처리 가능
    4. 데이터 표현과 하드웨어를 활용한 병렬성 구현을 자동으로 선택
 
+## 4.4 스트림 연산
+```java
+List<String> names = menu.stream()
+    .filter(dish -> dish.getCalories() > 300)
+    .map(Dish::getName)
+    .limit(3)
+    .collect(toList());
+```
+1. filter, map, limit
+   1. 서로 연결되어 파이프라인을 형성
+   2. 중간 연산
+2. collect
+   1. 파이프라인을 실행한 다음에 닫는산
+   2. 최종 연산
+
+
+## 4.4.1 중간 연산
+1. 중간 연산
+   1. 다른 스트림을 반환
+   2. 여러 중간 연산을ㄱ연결해서 질의를 만들 수 있다
+   3. 단말 연산을 스트림 파이프라인에 실행하기 전까지 아무 연산도 수행하지 않는다 == 게으르다
+   4. 중간 연산을 합친 다음에 합쳐진 중간 연산으로 한번에 처리한다
+
+
+```java
+List<String> names = menu.stream()
+    .filter(dish -> {
+        System.out.println("filtering:" + dish.getName());
+        return dish.getCalories() > 300;
+    })
+    .map(dish -> {
+        System.out.println("mapping:" + dish.getName());
+        return dish.getName();
+    })
+    .limit(3)
+    .collect(toList());
+System.out.println(names);
+```
+2. 300칼로리가 넘는 요리는 여러개지만 처음 3개만 선택
+   1. limit 연산
+   2. 쇼트서킷
+3. filter, map은 서로 다른 연산이지만 한 과정으로 병합
+   1. 루프 퓨전
+
+
+## 4.4.2 최종 산 
+1. 스트림 파이프라인에서 결과를 도출
+
+## 4.4.3 스트림 이용기 
+1. 스트림 이용 과정
+   1. 질의를 수행할 데이터 소스
+   2. 스트림 파이프라인을 구성할 중간 연산 연결
+   3. 스트림 파이프라인을 실행하고 결과를 만들 최종 연산
+
+## 4.6 마치며
+1. 소스에서 추출된 연속 요소
+   1. 데이터 처리 연산을 지원
+2. 내부 반복을 지원
+   1. 내부 반복은 filter, map, sorted 등의 연산으로 반복을 추상화
+3. 중간연산과 최종연산이 있음
+   1. 중간 연산은 filter, maㅇ처럼 스트림을 반환하면서 다른 연산과 연결
+   2. 중간 연산으로 파이프라인 구성 가능
+   3. 중간 연산으로 결과 생성 불가능
+   4. 최종 연산은 forEach, count 처럼 스트림 파이프라인을 처리해서 스트림이 아닌 결과를 리며
+4. 요청할 때 게으르게 계산된다 
