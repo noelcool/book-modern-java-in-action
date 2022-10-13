@@ -30,5 +30,71 @@ numbers.stream().filter(i -> i%2 == 0)
     .distinct().forEach(System.out::println);
 ```
 
+# 5.2 스트림 슬라이싱
+- 스트림의 요소를 선택하거나 스킵하기
+  - 프레디케이트 이용
+  - 처음 몇 개의 요소 무시하기
+  - 특정 크기로 스트림을 줄이기
 
+## 5.2.1 프레디케이트를 이용한 슬라이싱
+### TAKEWHILE
+```java
+List<Dish> specialMenu = Array.asList(
+  new Dish("seasonal fruit", false, 120, Dish.Type.OTHER),
+  new Dish("prawns", false, 140, Dish.Type.OTHER),
+  new Dish("rice", false, 350, Dish.Type.OTHER),
+  new Dish("french fries", false, 360, Dish.Type.OTHER),
+);
 
+List<Dish> filteredMenu = specialMenu.stream()
+    .filter(dish -> dish.getCalories() < 320)
+    .collect(toList());
+```
+- 위 리스트는 이미 칼로리 순으로 정렬되어 있다
+- filter 이용시 전체 스트림을 반복하면서 각 요소에 프레디케이트를 적용
+- 리스트가 이미 정렬되어 있으므로, 320칼로리보다 크거나 같은 요리가 나오면 반복 작업을 중단할 수 있다
+
+```java
+List<Dish> sliceMenu1 = specialMenu.stream()
+    .takeWhile(dish -> dish.getCalories() < 320)
+    .collect(toList());
+```
+- takeWhile을 이용하면 무한스트림을 포함한 모든 스트림에 프레디케이트를 적용해 스트림을 슬라이스 할 수 있다
+
+### DROPWHILE
+```java
+List<Dish> sliceMenu2 = specialMenu
+  .stream().dropWhile(dish -> dish.getCalories() < 320)
+  .collect(toList());
+```
+- dropWhile은 프레디케이트가 처음으로 거짓이 되는 지점까지 발견된 요소를 버린다
+- 프레디케이트가 거짓이 되면 그 지점에서 작업을 중단하고 남은 요소를 리턴한다
+- 무한한 남은 요소를 가진 무한 스트림에서도 동작한다
+
+## 5.2.2 스트림 축소
+- limit(n)
+  - 주어진 값 이하의 크기를 갖는 새로운 스트림을 리턴
+  - 정렬되어 있으면 최대 요소 n개 리턴
+
+```java
+List<Dish> dishes = specialMenu.stream()
+  .filter(dish -> dish.getCalories() > 300)
+  .limit(3)
+  .collect(toList());
+```
+
+- 정렬되지 않은 스트림에도 limit 사용 가능
+- 정렬되어 잇지 않다면 limit의 결과도 정렬되지 않은 상태로 리턴
+
+## 5.2.3 요소 건너뛰기
+- skip(n)
+  - 처음 n개의 요소를 제외한 스트림을 반환
+  - n개 이하의 요소를 포함하는 스트림에 skip(n)을 호출하면 빈 스트림 리턴
+
+```java
+// 300 칼로리 이상의 처음 두 요리를 건너뛴 다음에 300칼로리라 넘는 나머지 요리를 반환
+List<Dish> dishes = menu.stream()
+  .filter(d -> d.getCalories() > 300)
+  .skip(2)
+  .collect(toList());
+```
