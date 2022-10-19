@@ -98,3 +98,64 @@ List<Dish> dishes = menu.stream()
   .skip(2)
   .collect(toList());
 ```
+
+
+# 5.3 매핑
+- 특정 데이터 선택
+  - map
+  - flatMap
+
+## 5.3.1 스트림의 각 요소에 함수 적용하기
+- 스트림은 함수를 인수로 받는 map 메서드를 지원한다
+  - 인수로 제공된 함수는 각 요소에 적용
+  - 함수를 적용한 결과가 새로운 요소로 매핑
+  - 변환에 가가운 매핑
+
+```java
+List<String> dishNames = menu.stream()
+  .map(Dish::getName)
+  .collect(toList());
+
+List<String> words = Arrays.asList("Modern", "Java", "Action");
+List<String> wordLengths = words.stream()
+  .map(String::length)
+  .collect(toList());
+```
+
+## 5.3.2 스트림 평면화
+- 리스트에서 고유 문자로 이루어진 리스트 리턴하기
+- ["Hello", "World"]
+
+#### List<String[]>
+```java
+List<String[]> temp = words.stream()
+  .map(word -> word.split(""))
+  .distinct()
+  .collect(toList());
+```
+
+### map과 Arrays.stream 활용
+#### List<Stream<String>>
+- 문자열 스트림이 필요하다
+```java
+String[] arrayOfWords = {"GoodBye", "World"};
+Stream<String> streamOfWords = Arrays.stream(arrayOfWorlds);
+List<Stream<String>> temp = words.stream()
+  .map(word -> word.split(""))
+  .map(Arrays::stream)
+  .distinct()
+  .collect(toList());
+```
+
+### flatMap 사용
+```java
+List<String> uniqueCharacters = words.stream()
+  .map(word -> word.split(""))
+  .flatMap(Arrays::stream)
+  .distinct()
+  .collect(toList());
+```
+- flatMap
+  - 각 배열을 스트림이 아니라 스트림의 콘텐츠로 매핑한다
+  - 하나의 평면화된 스트림을 리턴한다
+  - 스트림의 각 값을 다른 스트림으로 만든 다음에 모든 스트림을 하나의 스트림으로 연결하는 기능을 수행한다
