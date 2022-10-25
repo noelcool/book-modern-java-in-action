@@ -159,3 +159,53 @@ List<String> uniqueCharacters = words.stream()
   - 각 배열을 스트림이 아니라 스트림의 콘텐츠로 매핑한다
   - 하나의 평면화된 스트림을 리턴한다
   - 스트림의 각 값을 다른 스트림으로 만든 다음에 모든 스트림을 하나의 스트림으로 연결하는 기능을 수행한다
+
+# 5.4 검색과 매칭
+- 특정 속성이 데이터 집합에 있는지 여부를 검색하는 데이터 처리
+- allMatch, anyMatch, noneMatch, findFirst, findAny ...
+
+## 5.4.1 프레디케이트가 적어도 한 요소와 일치하는지 확인
+- anyMatch
+  - 불리언을 리턴
+  - 최종 연산
+```java
+if(menu.stream().anyMatch(Dish::isVegetarian)) {
+  System.out.println("");
+}
+```
+
+## 5.4.2 프레디케이트가 모든 요소와 일치하는지 검사
+- allMatch
+```java
+boolean isHealthy = menu.stream().allMatch(dish -> dish.getCalories90 < 1000);
+```
+
+- noneMatch
+  - 일치하는 요소가 없는것을 확인
+```java
+boolean isHealthy = menu.stream().noneMatch(d -> d.getCalories() >= 1000);
+```
+
+- anyMatch, allMatch, noneMatch
+  - 스트림 요트서킷 기법
+  - 자바의 && || 와 같은 연산을 활용
+  - 전체 스트림을 처리하지 않았더라도 결과 리턴 가능
+  - 하나라도 거짓이면 전체 결과가 거짓
+
+## 5.4.3 요소 검색
+- findAny
+  - 현재 스트림에서 임의의 요소 리턴
+```java
+Optional<Dish> dish = menu.stream()
+  .filter(Dish::isVegetarian)
+  .findAny();
+```
+
+## 5.4.4 첫 번째 요소 찾기
+```java
+List<Integer> someNumbers = Arrays.asList(1, 2, 3, 4, 5);
+Optional<Integer> firstSquareDivisibleByThree = someNumbers.stream()
+  .map(n -> n * n)
+  .filter(n -> n % 3 == 0)
+  .findFirst();
+```
