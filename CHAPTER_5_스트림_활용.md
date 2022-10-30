@@ -209,3 +209,30 @@ Optional<Integer> firstSquareDivisibleByThree = someNumbers.stream()
   .filter(n -> n % 3 == 0)
   .findFirst();
 ```
+
+# 5.5 리듀싱
+- 리듀싱 연산
+  - 모든 스트림의 요소를 처리해서 값으로 도출하는 것
+
+## 5.5.1 요소의 합
+```java
+int sum = numbers.stream().reduce(0, (a, b) -> a + b);
+int sum = numbers.stream().reduce(0, Integer::sum);
+```
+
+- reduce는 두 개의 인수를 갖는다
+  - 초깃값 0
+  - 두 요소를 조합해서 새로운 값을 만드는 BinaryOperator<T>
+
+### 초깃값 없음
+```java
+Optional<Integer> sum = numbers.stream().reduce((a, b) -> (a+b));
+```
+- 합계가 없을 수도 있으므로 Optional로 리턴받는다
+
+## 5.5.2 최댓값과 치솟값
+
+```java
+Optional<Integer> max = numbers.stream().reduce(Integer::max);
+Optional<Integer> min = numbers.stream().reduce(Integer::min);
+```
