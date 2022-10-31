@@ -236,3 +236,58 @@ Optional<Integer> sum = numbers.stream().reduce((a, b) -> (a+b));
 Optional<Integer> max = numbers.stream().reduce(Integer::max);
 Optional<Integer> min = numbers.stream().reduce(Integer::min);
 ```
+
+# 5.7 숫자형 스트림
+
+## 5.7.1 기본형 특화 스트림
+1. IntStream
+2. DoubleStream
+3. LongStream
+
+- 각 인터페이스는 sum, max같은 숫자 관련 리듀싱 연산 수행 메서드 제공
+- 다시 객체 스트림으로 복원하는 기능 제공
+- 특화 스트림은 박싱 과정에서 일어나는 효율성과 관계 O
+- 스트림에 추가 기능 제공 X
+
+### 숫자 스트림으로 매핑
+- 숫자 -> 특화 스트림
+  - mapToInt, mapToDouble, mapToLong 을 가장 많이 사용한다
+  - map과 같은 기능을 수행하지만 `Stream<T>` 대한 특화 스트림을 리턴한다
+  - 스트림이 비어있으면 sum은 0을 리턴
+
+```java
+int calories = menu.stream()
+  .mapToInt(Dish::getCalories)
+  .sum();
+```
+
+### 객체 스트림으로 복원하기
+```java
+IntStream intStream = menu.stream().mapToInt(Dish::getCalories);
+Stream<Integer> stream = intStream.boxed();
+```
+
+### 기본값 : OptionalInt
+- 스트림에 요소가 없는 상황과 실제 최댓값이 0인 상황을 구별하기 위해서
+- Optionalint, OptionalDouble, OptionalLong
+
+```java
+OptionalInt maxCalories = menu.stream()
+  .mapToInt(Dish::getCalories)
+  .max();
+
+// 값이 없을 때ㄱ기본 최댓값을 명시적으로 설정
+int max = maxCalories.orElse(1);
+```
+
+## 5.7.2 숫자 범위
+- IntStream, LongStream
+- 첫번째 인수(시작값) / 두번째 인수(종료값)
+- range : 시작값과 종료값이 결과에 포함 X
+- rangeClosed : 시작값과 종료값이 결과에 포함 O
+
+```java
+IntStream evenNumbers = IntStream.rangeClosed(1, 100).filter(n -> n % 2 == 0);
+```
+
+
